@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ytx.management.consumer.dao.SiteInfoDao">
+	
+	<!--<resultMap id="SiteInfo" type="com.ytx.management.consumer.entity.SiteInfo" >
+		<result column="id" property="id" />
+	    <result column="site_no" property="siteNo" />
+	    <result column="sport_site_no" property="sportSiteNo" />
+	    <result column="ip" property="ip" />
+		<result column="upper_name" property="uppername" />
+		<result column="deskey" property="deskey" />
+		<result column="allowed_type" property="allowedtype" />
+		<result column="perbatch" property="perbatch" />
+		<result column="prefix" property="prefix" />
+		<result column="enable" property="enable" />
+		<result column="ptscore" property="ptscore" />
+	</resultMap>
+
+	<sql id="Base_Column_List">
+		t.id,
+		t.site_no,
+		t.sport_site_no,
+		t.`ip`,
+		t.upper_name,
+		t.deskey,
+		t.allowed_type,
+		t.perbatch,
+		t.prefix,
+		t.enable,
+		t.ptscore,
+	</sql>
+
+	<select id="findAll" resultMap="SiteInfo">
+		SELECT <include refid="Base_Column_List" />
+		FROM xxl_job_group AS t
+		ORDER BY t.order ASC
+	</select>
+
+
+	<insert id="save" parameterType="com.xxl.job.admin.core.model.XxlJobGroup" useGeneratedKeys="true" keyProperty="id" >
+		INSERT INTO xxl_job_group ( `app_name`, `title`, `order`, `address_type`, `address_list`)
+		values ( #{appName}, #{title}, #{order}, #{addressType}, #{addressList});
+	</insert>
+
+
+	<select id="load" parameterType="java.lang.Integer" resultMap="XxlJobGroup">
+		SELECT <include refid="Base_Column_List" />
+		FROM xxl_job_group AS t
+		WHERE t.id = #{id}
+	</select>-->
+
+</mapper>

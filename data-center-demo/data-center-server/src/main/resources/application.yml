@@ -1,0 +1,7 @@
+server:
+  port: 8768
+
+app:
+  description: demo
+  author: ytx
+  email: 960339491@qq.com

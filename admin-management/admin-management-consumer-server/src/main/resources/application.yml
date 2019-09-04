@@ -1,0 +1,28 @@
+### web
+server:
+  port: 8079
+  servlet:
+    context-path: /admin/management
+spring:
+  mvc:
+    static-path-pattern: /static/**
+  resources:
+    static-locations: classpath:/static/
+  freemarker:
+    templateLoaderPath: classpath:/templates/
+    suffix: .ftl
+    charset: UTF-8
+    request-context-attribute: request
+    settings:
+      number_format: 0.##########
+    ### 开发时设置
+      template_update_delay: 0
+    ### 开发时设置
+    cache: false
+
+  messages:
+    basename: i18n/messages
+    encoding: UTF-8
+admin:
+  manage:
+     i18n:

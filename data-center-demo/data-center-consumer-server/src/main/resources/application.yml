@@ -1,0 +1,338 @@
+server:
+  port: 8769
+
+spring:
+  profiles:
+    include:
+      - mysql
+  cache: ### eh-cache
+    cache-names: lotteryCache
+    type: ehcache
+    ehcache:
+      config: classpath:ehcache.xml
+#  cloud:
+#    inetutils:
+#      preferred-networks: #多网卡环境使用指定网段
+#        - 192.168
+#      ignored-interfaces: #docker环境,排除 docker0等虚拟网卡
+#        - docker0
+#        - veth.*
+app:
+  group: data-center
+  name: data-center.consumer-server
+  db: lottery_data_center
+  mapper: com.ytx.center.server.dao
+  menums: com.ytx.center.server.extension.enums
+  mhandlers: com.ytx.center.server.extension.handler
+  description: demo
+  author: ytx
+  email: 960339491@qq.com
+  datasource:
+    host: 192.168.2.177
+    username: root
+    password: qwer1234
+    druid:
+      public-key: abc
+
+dynamic:
+  datasource:
+    slave1:
+      driver-class-name: com.mysql.cj.jdbc.Driver
+      url: jdbc:mysql://192.168.2.177:3306/lottery_data_center?allowMultiQueries=true&useUnicode=true&characterEncoding=UTF-8&useSSL=false
+      username: root
+      password: qwer1234
+
+### xx-job
+xxl:
+  job:
+    admin:
+      ### xxl-job admin address list, such as "http://address" or "http://address01,http://address02"
+      addresses: http://192.168.2.187:8080/xxl-job-admin
+    #分别配置执行器的名称、ip地址、端口号
+    #注意：如果配置多个执行器时，防止端口冲突
+    executor:
+      ### xxl-job executor address
+      appname: data-center
+#      ip: 192.168.2.187
+      port: 9997
+      ### xxl-job log path 执行器运行日志文件存储的磁盘位置，需要对该路径拥有读写权限
+      logpath: /data/applogs/xxl-job/jobhandler
+      ### xxl-job log retention days，when -1 means forever
+      ### 执行器Log文件定期清理功能，指定日志保存天数，日志文件过期自动删除。限制至少保持3天，否则功能不生效
+      ### -1表示永不删除
+      logretentiondays: 3
+    ### xxl-job, access token
+    accessToken: ytx
+
+
+
+
+logging:
+  path: logs/lottery.log
+  file:
+    max-size: 10MB
+  pattern:
+    console: '%d{yyyy/MM/dd-HH:mm:ss} [%thread] %-5level %logger- %msg%n'
+    file: '%d{yyyy/MM/dd-HH:mm:ss} [%thread] %-5level %logger- %msg%n'
+  level:
+    com.alibaba.nacos.client.naming: Error
+    com.ytx.center.server: DEBUG
+    com.xxl.job: DEBUG
+
+
+
+lottery:
+  errorProp: errorCode
+  resultProp: result
+  dataProp: data
+  lotterySource:
+    KJW168:
+      - url: 'https://api.api861861.com/pks/getPksDoubleCount.do?lotCode=10001&date='
+        historyUrl: 'https://api.api861861.com/LotteryPlan/getPksPlanList.do?lotCode=10001&rows=10&date='
+        passageway: 1
+        positions: preDrawCode
+        issue: preDrawIssue
+        openWinTime: preDrawTime
+        description: 北京PK10
+        name: BJPK10
+        interval: 5
+        min: 1
+        max: 11
+        positionPolicy:
+        enable: true
+        # 历史ok
+      - url: 'https://api.api861861.com/LuckTwenty/getBaseLuckTewnty.do?issue=&lotCode=10014&date='
+        historyUrl: 'https://api.api861861.com/LuckTwenty/getBaseLuckTwentyList.do?lotCode=10014&date='
+        passageway: 1
+        positions: preDrawCode
+        issue: preDrawIssue
+        openWinTime: preDrawTime
+        description: 北京快乐8
+        name: BJKL8
+        interval: 5
+        min: 0
+        max: 81
+        positionPolicy:
+        enable: true
+        #历史ok
+      - url: 'https://api.api861861.com/lotteryJSFastThree/getBaseJSFastThree.do?issue=&lotCode=10033&date='
+        historyUrl: 'https://api.api861861.com/lotteryJSFastThree/getJSFastThreeList.do?lotCode=10033&date='
+        passageway: 1
+        positions: preDrawCode
+        issue: preDrawIssue
+        openWinTime: preDrawTime
+        description: 北京快3
+        name: bjk3
+        interval: 5
+        min: 1
+        max: 7
+        positionPolicy:
+        enable: true
+        # 历史ok
+      - url: 'https://api.api861861.com/LuckTwenty/getBaseLuckTewnty.do?issue=&lotCode=10014&date='
+        historyUrl: 'https://api.api861861.com/LuckTwenty/getBaseLuckTwentyList.do?lotCode=10014&date='
+        passageway: 1
+        positions: preDrawCode
+        issue: preDrawIssue
+        openWinTime: preDrawTime
+        description: 北京时时彩
+        name: bjssc
+        interval: 5
+        min: 1
+        max: 81
+        positionPolicy: com.ytx.center.server.utils.CombInterval10PositionPolicy
+        enable: true
+      - url: 'https://api.api861861.com/CQShiCai/getBaseCQShiCai.do?issue=&lotCode=10060&date='
+        historyUrl: 'https://api.api861861.com/LotteryPlan/getSscPlanList.do?lotCode=10060&rows=10&date='
+        passageway: 1
+        positions: preDrawCode
+        issue: preDrawIssue
+        openWinTime: preDrawTime
+        description: 重庆欢乐生肖
+        name: CQHLSX
+        interval: 5
+        min: 0
+        max: 10
+        positionPolicy:
+        enable: true
+      - url: 'https://api.api861861.com/CQShiCai/getBaseCQShiCai.do?issue=&lotCode=10060&date='
+        historyUrl: 'https://api.api861861.com/LotteryPlan/getSscPlanList.do?lotCode=10060&rows=10&date='
+        passageway: 1
+        positions: preDrawCode
+        issue: preDrawIssue
+        openWinTime: preDrawTime
+        description: 重庆时时彩
+        name: cqssc
+        interval: 5
+        min: 0
+        max: 10
+        positionPolicy:
+        enable: true
+        #历史ok
+      - url: 'https://api.api861861.com/ElevenFive/getElevenFiveInfo.do?issue=&lotCode=10006&date='
+        historyUrl: 'https://api.api861861.com/ElevenFive/getElevenFiveList.do?lotCode=10006&date='
+        passageway: 1
+        positions: preDrawCode
+        issue: preDrawIssue
+        openWinTime: preDrawTime
+        description: 广东11选5
+        name: gd11x5
+        interval: 5
+        min: 1
+        max: 12
+        positionPolicy:
+        enable: true
+        # 历史ok
+      - url: 'https://api.api861861.com/LotteryPlan/getKlsfPlan.do?lotCode=10005&date='
+        historyUrl: 'https://api.api861861.com/LotteryPlan/getKlsfPlanList.do?lotCode=10005&rows=10&date='
+        passageway: 1
+        positions: preDrawCode
+        issue: preDrawIssue
+        openWinTime: preDrawTime
+        description: 广东快乐十分
+        name: GDKL10F
+        interval: 5
+        min: 1
+        max: 20
+        positionPolicy:
+        enable: true
+        # 历史ok
+      - url: 'http://api.api68.com/lotteryJSFastThree/getBaseJSFastThree.do?issue=&lotCode=10026&t='
+        historyUrl: 'https://api.api861861.com/lotteryJSFastThree/getJSFastThreeList.do?lotCode=10026&date='
+        passageway: 1
+        positions: preDrawCode
+        issue: preDrawIssue
+        openWinTime: preDrawTime
+        description: 广西快3
+        name: gxk3
+        interval: 5
+        min: 1
+        max: 7
+        positionPolicy:
+        enable: true
+        #历史ok
+      - url: 'http://api.api68.com/klsf/getLotteryInfo.do?issue=&lotCode=10038&time='
+        historyUrl: 'https://api.api861861.com/gxklsf/getHistoryLotteryInfo.do?lotCode=10038&date='
+        passageway: 1
+        positions: preDrawCode
+        issue: preDrawIssue
+        openWinTime: preDrawTime
+        description: 广西快乐十分
+        name: GXKL10F
+        interval: 5
+        min: 1
+        max: 22
+        positionPolicy:
+        enable: true
+        # 历史ok
+      - url: 'http://api.api68.com/lotteryJSFastThree/getBaseJSFastThree.do?issue=&lotCode=10007&t='
+        historyUrl: 'https://api.api861861.com/lotteryJSFastThree/getJSFastThreeList.do?lotCode=10007&date='
+        passageway: 1
+        positions: preDrawCode
+        issue: preDrawIssue
+        openWinTime: preDrawTime
+        description: 江苏快3
+        name: jsk3
+        interval: 5
+        min: 1
+        max: 7
+        positionPolicy:
+        enable: true
+        # 历史ok
+      - url: 'http://api.api68.com/LuckTwenty/getPcLucky28.do?issue=&t='
+        historyUrl: 'https://api.api861861.com/LuckTwenty/getPcLucky28List.do?date='
+        passageway: 1
+        positions: preDrawCode
+        issue: preDrawIssue
+        openWinTime: preDrawTime
+        description: pc蛋蛋幸运28
+        name: PCDDXY28
+        interval: 5
+        min: 0
+        max: 10
+        positionPolicy:
+        enable: true
+        # 历史ok
+      - url: 'http://api.api68.com/ElevenFive/getElevenFiveInfo.do?issue=&lotCode=10008&time='
+        historyUrl: 'https://api.api861861.com/ElevenFive/getElevenFiveList.do?lotCode=10008&date='
+        passageway: 1
+        positions: preDrawCode
+        issue: preDrawIssue
+        openWinTime: preDrawTime
+        description: 十一运夺金
+        name: syydj
+        interval: 5
+        min: 1
+        max: 12
+        positionPolicy:
+        enable: true
+        # 历史ok
+      - url: 'http://api.api68.com/CQShiCai/getBaseCQShiCai.do?issue=&lotCode=10003&time='
+        historyUrl: 'https://api.api861861.com/CQShiCai/getBaseCQShiCaiList.do?lotCode=10003&date='
+        passageway: 1
+        positions: preDrawCode
+        issue: preDrawIssue
+        openWinTime: preDrawTime
+        description: 天津时时彩
+        name: tjssc
+        interval: 5
+        min: 0
+        max: 10
+        positionPolicy:
+        enable: true
+        # 历史ok
+      - url: 'http://api.api68.com/CQShiCai/getBaseCQShiCai.do?issue=&lotCode=10004&time='
+        historyUrl: 'https://api.api861861.com/CQShiCai/getBaseCQShiCaiList.do?lotCode=10004&date='
+        passageway: 1
+        positions: preDrawCode
+        issue: preDrawIssue
+        openWinTime: preDrawTime
+        description: 新疆时时彩
+        name: xjssc
+        interval: 5
+        min: 0
+        max: 10
+        positionPolicy:
+        enable: true
+        # 历史ok
+      - url: 'http://api.api861861.com/pks/getLotteryPksInfo.do?lotCode=10057&date='
+        historyUrl: 'https://api.api861861.com/pks/getPksHistoryList.do?lotCode=10057&date='
+        passageway: 1
+        positions: preDrawCode
+        issue: preDrawIssue
+        openWinTime: preDrawTime
+        description: 幸运飞艇
+        name: xyft
+        interval: 5
+        min: 1
+        max: 11
+        positionPolicy:
+        enable: true
+        # 历史ok
+      - url: 'http://api.api68.com/klsf/getLotteryInfo.do?issue=&lotCode=10009&time='
+        historyUrl: 'https://api.api861861.com/LotteryPlan/getKlsfPlanList.do?lotCode=10009&rows=10&date='
+        passageway: 1
+        positions: preDrawCode
+        issue: preDrawIssue
+        openWinTime: preDrawTime
+        description: 重庆幸运农场
+        name: CQXYNC
+        interval: 5
+        min: 1
+        max: 21
+        positionPolicy:
+        enable: true
+    CPK:
+      - url: 'https://api.api861861.com/pks/getLotteryPksInfo.do?issue=&lotCode=10058&date='
+        historyUrl: 'https://api.api861861.com/LotteryPlan/getPksPlanList.do?lotCode=10058&rows=10&date='
+        passageway: 1
+        positions: preDrawCode
+        issue: preDrawIssue
+        openWinTime: preDrawTime
+        description: SG飞艇
+        name: SGFT
+        interval: 5
+        min: 0
+        max: 81
+        positionPolicy:
+        enable: true

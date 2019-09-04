@@ -1,0 +1,31 @@
+spring:
+  profiles:
+    include:
+      - nacos
+  application:
+    cloud:
+      nacos:
+        sentinel:
+          datasource:
+            data-center-consumer-server:
+              nacos:
+                server-addr: ${app.nacos.addr}
+                dataId: ${spring.application.name}-degrade-rules
+                data-type: json
+                rule-type: degrade
+sentinel:
+  client:
+    port: 1993
+    dashboard: 192.168.2.130:8080
+
+app:
+  name: "data-center.demo-consumer-server"
+  nacos:
+    sentinal:
+      addr: 192.168.2.130:8080
+    config:
+      ext: yaml
+    addr: 192.168.2.180:8848
+  management:
+    health:
+      show: ALWAYS
